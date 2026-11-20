@@ -1,6 +1,7 @@
 fastapi
-matplotlib
-pandas
-unidecode
-pydantic
 uvicorn
+pandas
+matplotlib
+unidecode
+requests
+pydantic
