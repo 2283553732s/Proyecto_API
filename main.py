@@ -342,5 +342,50 @@ def eliminar_poliza(poliza_id: int):
 ###############################
 
 
+## Usuarios y contra
+@app.post("/usuarios", status_code=201)
+def crear_usuario(u: UsuarioIn):
+    if u.username in usuarios:
+        raise HTTPException(status_code=400, detail="El usuario ya existe")
+    usuarios[u.username] = hash_password(u.password)  # se guarda el hash, no la contraseña
+    return {"mensaje": "Usuario creado", "username": u.username}
+
+
+@app.post("/login")
+def login(u: UsuarioIn):
+    if usuarios.get(u.username) != hash_password(u.password):
+        raise HTTPException(status_code=401, detail="Usuario o contraseña incorrectos")
+    return {"mensaje": f"Bienvenido, {u.username}"}
+
+## 10 Análisis con Pandas
+@app.get("/analisis/prima-promedio-tipo")
+def prima_promedio_tipo():
+    return polizas.groupby("tipo_seguro")["prima_anual"].mean().round(2).to_dict()
+
+
+@app.get("/analisis/polizas-por-tipo")
+def polizas_por_tipo():
+    return polizas.groupby("tipo_seguro").size().to_dict()
+
+
+@app.get("/analisis/siniestros-por-tipo")
+def siniestros_por_tipo():
+    return polizas.groupby("tipo_seguro")["siniestros"].sum().to_dict()
+
+
+@app.get("/analisis/prima-promedio-estado")
+def prima_promedio_estado():
+    return polizas.groupby("estado")["prima_anual"].mean().round(2).to_dict()
+
+
+@app.get("/analisis/suma-asegurada-promedio-tipo")
+def suma_promedio_tipo():
+    return polizas.groupby("tipo_seguro")["suma_asegurada"].mean().round(2).to_dict()
+
+
+@app.get("/analisis/frecuencia-siniestros-tipo")
+def frecuencia_tipo():
+    g = polizas.groupby("tipo_seguro")["siniestros"].agg(["sum", "count"])
+    return (g["sum"] / g["count"]).round(4).to_dict()    
 
 
