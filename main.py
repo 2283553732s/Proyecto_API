@@ -257,7 +257,7 @@ def crear_poliza(datos: PolizaIn):
         new_content = build_csv(headers, rows)
 
         save_csv(new_content, sha)
-        return {"mensaje": "Póliza creada correctamente", "poliza": polizas.to_dict()}
+        ## return {"mensaje": "Póliza creada correctamente", "poliza": polizas.to_dict()}
 
     except Exception:
         print("No se pudo guardar")
