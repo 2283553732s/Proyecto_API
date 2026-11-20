@@ -1,0 +1,6 @@
+fastapi
+matplotlib
+pandas
+unidecode
+pydantic
+hashlib
