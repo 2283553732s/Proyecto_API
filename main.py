@@ -234,7 +234,6 @@ def hash_password(password: str) -> str:
     return hashlib.sha256(password).hexdigest()
 
 
-
 ## 5 Crear póliza
 @app.post("/polizas", status_code=201)              
 def crear_poliza(datos: PolizaIn):
@@ -257,12 +256,13 @@ def crear_poliza(datos: PolizaIn):
         new_content = build_csv(headers, rows)
 
         save_csv(new_content, sha)
-        
-
+        print("Si lo pude guardar")
+        for i in range(10):print("+")
     except Exception:
         print("No se pudo guardar")
-        return {"mensaje": "fallo al guardarse"}
-    return {"mensaje": "Póliza creada correctamente", "poliza": polizas.to_dict()}        
+
+    return {"mensaje": "Póliza creada correctamente", "poliza": polizas.to_dict()}
+
 
     
 ##6 Reemplazar
