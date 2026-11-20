@@ -198,7 +198,38 @@ class UsuarioIn(BaseModel):
 import hashlib
 def hash_password(password: str) -> str:
     return hashlib.sha256(password).hexdigest()
-    
+
+
+
+## 5 Crear póliza
+@app.post("/polizas", status_code=201)              
+def crear_poliza(datos: PolizaIn):
+    global polizas
+    nuevo_id = max((polizas["id"])) + 1
+    nueva = {"id": nuevo_id, **datos.model_dump()}
+    print(nueva)
+    for i in range(10):
+        print()
+    print("Aqui me quede")
+    nuevo_df=pd.DataFrame([nueva])
+    print(nuevo_df)
+
+    polizas = pd.concat([polizas, nuevo_df], ignore_index=True)
+    ## Intento de conectar:
+    try:
+        content, sha = get_csv()
+
+        headers, rows = parse_csv(content)
+        new_content = build_csv(headers, rows)
+
+        save_csv(new_content, sha)
+        print("Si lo pude guardar")
+        for i in range(10):print("+")
+    except Exception:
+        print("No se pudo guardar")
+
+
+    return {"mensaje": "Póliza creada correctamente", "poliza": polizas.to_dict()}
 
 
 
