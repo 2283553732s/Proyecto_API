@@ -161,37 +161,6 @@ async def root():
     </html>
     """
 
-@app.get("/mostrar-polizas")
-def mostrar_polizas ():
-    return polizas.to_dict()
 
-def buscar(poliza_id: int):
-    for p in polizas["id"]:
-        if p == poliza_id:
-            return polizas[polizas["id"]==p].to_dict()
-    raise HTTPException(status_code=404, detail="Póliza no encontrada")
-
-@app.get("/buscar-poliza")
-def buscar1(poliza_id: int):
-    for p in polizas["id"]:
-        if p == poliza_id:
-            return polizas[polizas["id"]==p].to_dict()
-    raise HTTPException(status_code=404, detail="Póliza no encontrada")
-
-##
-@app.get("/Filtrar-poliza")
-def listar_polizas(estado: str = None, tipo_seguro: str = None,edad_min: int = None,edad_max: int = None):
-    respuesta=polizas.copy()
-
-    if estado is not None:
-        respuesta=respuesta[respuesta["estado"]==estado]
-    if tipo_seguro is not None:
-        respuesta=respuesta[respuesta["tipo_seguro"]==tipo_seguro]
-    if edad_min is not None:
-        respuesta=respuesta[respuesta["edad"]>edad_min]
-    if edad_max is not None:
-        respuesta=respuesta[respuesta["edad"]<=edad_max]
-    
-    return respuesta.to_dict()
 
 
