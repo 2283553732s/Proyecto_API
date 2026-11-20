@@ -155,7 +155,50 @@ async def root():
             <a href="/docs"> Ir a Docs </a> 
         </body>
     </html>
+
     """
+
+## 4: Crear modelos
+
+
+class PolizaIn(BaseModel):
+    cliente_id: int = Query(gt=0)
+    edad: int = Query(ge=0, le=110)
+    sexo: Literal["M", "F"]
+    estado: str = Field(min_length=3)
+    tipo_seguro: Literal["Vida", "Gastos Médicos", "Hogar", "Auto"]
+    prima_anual: float = Field(gt=0)
+    suma_asegurada: float = Field(gt=0)
+    siniestros: int = Field(default=0, ge=0)
+    ingreso_anual: Optional[float] = Field(default=None, ge=0)
+
+
+class Poliza(PolizaIn):
+    id: int
+
+
+class PolizaPatch(BaseModel):
+    cliente_id: Optional[int] = Query(default=None, gt=0)
+    edad: Optional[int] = Query(default=None, ge=0, le=110)
+    sexo: Optional[Literal["M", "F"]] = None
+    estado: Optional[str] = Field(default=None, min_length=3)
+    tipo_seguro: Optional[Literal["Vida", "Gastos Médicos", "Hogar", "Auto"]] = None
+    prima_anual: Optional[float] = Field(default=None, gt=0)
+    suma_asegurada: Optional[float] = Field(default=None, gt=0)
+    siniestros: Optional[int] = Field(default=None, ge=0)
+    ingreso_anual: Optional[float] = Field(default=None, ge=0)
+
+
+class UsuarioIn(BaseModel):
+    username: str = Field(min_length=3)
+    password: str = Field(min_length=6)
+
+
+
+import hashlib
+def hash_password(password: str) -> str:
+    return password
+    
 
 
 
