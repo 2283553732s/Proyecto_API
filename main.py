@@ -172,11 +172,6 @@ def listar_polizas(estado: str = None, tipo_seguro: str = None,edad_min: int = N
 
 
 #######################################################################################################################################
-
-
-
-
-
 ## API
 @app.get("/", response_class=HTMLResponse)
 async def root():
@@ -262,13 +257,90 @@ def crear_poliza(datos: PolizaIn):
         new_content = build_csv(headers, rows)
 
         save_csv(new_content, sha)
-        print("Si lo pude guardar")
-        for i in range(10):print("+")
+        return {"mensaje": "Póliza creada correctamente", "poliza": polizas.to_dict()}
+
+    except Exception:
+        print("No se pudo guardar")
+        return {"mensaje": "fallo al guardarse"}
+        
+
+    
+##6 Reemplazar
+@app.put("/polizas/{poliza_id}")
+def reemplazar_poliza(poliza_id: int, datos: PolizaIn):
+    if poliza_id not in polizas["id"].values:
+        raise HTTPException(status_code=404, detail="Póliza no encontrada")
+
+    mask = polizas["id"] == poliza_id
+    for columna, valor in datos.model_dump().items():
+        polizas.loc[mask, columna] = valor
+
+    fila_actualizada = polizas[mask].to_dict(orient="records")[0]
+
+    ######## PENDIENTE 
+    try:
+        content, sha = get_csv()
+
+        headers, rows = parse_csv(content)
+        new_content = build_csv(headers, rows)
+
+        save_csv(new_content, sha)
     except Exception:
         print("No se pudo guardar")
 
+    return {"mensaje": "Póliza reemplazada", "poliza": fila_actualizada}
 
-    return {"mensaje": "Póliza creada correctamente", "poliza": polizas.to_dict()}
+##7 Actualizar      #nooo
+@app.patch("/polizas/{poliza_id}")
+def modificar_poliza(poliza_id: int, cambios: PolizaPatch):
+    if poliza_id not in polizas["id"].values:
+        raise HTTPException(status_code=404, detail="Póliza no encontrada")
+
+    datos_actualizados = cambios.model_dump(exclude_unset=True, exclude_none=True)
+
+    mask = polizas["id"] == poliza_id
+    for columna, valor in datos_actualizados.items():
+        polizas.loc[mask, columna] = valor    
+             
+## porque es un dataframe, me costó mucho y me tuvo que ayudar un ser suprema por arriba de nuestro entendimiento con consciencia propia
+    fila_actualizada = polizas[mask].to_dict(orient="records")[0]
+
+
+    ######## PENDIENTE 
+    try:
+        content, sha = get_csv()
+
+        headers, rows = parse_csv(content)
+        new_content = build_csv(headers, rows)
+
+        save_csv(new_content, sha)
+    except Exception:
+        print("No se pudo guardar")
+
+###############################
+    return {"mensaje": "Póliza actualizada", "poliza": fila_actualizada}
+
+## 8 eliminar
+
+@app.delete("/polizas/{poliza_id}")
+def eliminar_poliza(poliza_id: int):
+    p = buscar(poliza_id)  # si no existe, responde 404
+    polizas.drop(index=poliza_id-1, inplace=True)
+    return {"mensaje": f"Póliza {poliza_id} eliminada"}
+
+    ######## PENDIENTE 
+    try:
+        content, sha = get_csv()
+
+        headers, rows = parse_csv(content)
+        new_content = build_csv(headers, rows)
+
+        save_csv(new_content, sha)
+    except Exception:
+        print("No se pudo guardar")
+
+###############################
+
 
 
 
