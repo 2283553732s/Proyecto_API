@@ -197,7 +197,7 @@ class UsuarioIn(BaseModel):
 
 import hashlib
 def hash_password(password: str) -> str:
-    return password
+    return hashlib.sha256(password).hexdigest()
     
 
 
