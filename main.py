@@ -19,8 +19,9 @@ from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 
 ## Variables globales
-polizas=pd.read_csv("polizas_actuaria.csv")
+BASE_DIR = Path(__file__).resolve().parent
 
+polizas = pd.read_csv(BASE_DIR / "polizas_actuaria.csv")
 app=FastAPI()
 usuarios = {}  
 
@@ -33,8 +34,6 @@ import requests
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-
-app = FastAPI()
 
 
 
